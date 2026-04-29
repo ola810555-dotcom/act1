@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Telefonica Pro</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Fondo decorativo -->
+  <div class="page-glow page-glow-left" aria-hidden="true"></div>
+  <div class="page-glow page-glow-right" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Organizacion personal</p>
+        <h1>Agenda Telefonica Pro</h1>
+        <p class="hero-text">
+          Guarda contactos, agrega comentarios, marca favoritos y encuentra cualquier dato en segundos.
+        </p>
+      </div>
+
+      <section class="stats-panel" aria-label="Resumen de contactos">
+        <article class="stat-card">
+          <span class="stat-label">Total</span>
+          <strong id="totalContacts">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Favoritos</span>
+          <strong id="favoriteContacts">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Categorias</span>
+          <strong id="categoryCount">0</strong>
+        </article>
+      </section>
+    </header>
+
+    <section class="workspace-grid">
+      <!-- Panel izquierdo: formulario y acciones globales -->
+      <aside class="panel panel-form">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Formulario</p>
+            <h2>Nuevo contacto</h2>
+          </div>
+          <button id="resetButton" class="ghost-button" type="button">Limpiar</button>
+        </div>
+
+        <form id="contactForm" class="contact-form">
+          <input type="hidden" id="contactId">
+
+          <label>
+            Nombre completo
+            <input id="name" name="name" type="text" placeholder="Ej. Ana Martinez" required>
+          </label>
+
+          <div class="two-columns">
+            <label>
+              Telefono principal
+              <input id="phone" name="phone" type="tel" placeholder="Ej. 5555-0101" required>
+            </label>
+
+            <label>
+              Telefono alterno
+              <input id="secondaryPhone" name="secondaryPhone" type="tel" placeholder="Opcional">
+            </label>
+          </div>
+
+          <div class="two-columns">
+            <label>
+              Correo electronico
+              <input id="email" name="email" type="email" placeholder="contacto@correo.com">
+            </label>
+
+            <label>
+              Empresa
+              <input id="company" name="company" type="text" placeholder="Ej. Studio Norte">
+            </label>
+          </div>
+
+          <div class="two-columns">
+            <label>
+              Categoria
+              <input id="category" name="category" type="text" list="categorySuggestions" placeholder="Ej. Trabajo o Familia" value="Personal">
+              <datalist id="categorySuggestions">
+                <option value="Personal"></option>
+                <option value="Trabajo"></option>
+                <option value="Familia"></option>
+                <option value="Emergencia"></option>
+                <option value="Proveedor"></option>
+              </datalist>
+            </label>
+
+            <label>
+              Cumpleanos
+              <input id="birthday" name="birthday" type="date">
+            </label>
+          </div>
+
+          <label>
+            Direccion
+            <input id="address" name="address" type="text" placeholder="Ej. Zona 10, Ciudad de Guatemala">
+          </label>
+
+          <label>
+            Comentarios / notas
+            <textarea id="notes" name="notes" rows="4" placeholder="Relacion, observaciones, horario, recordatorios..."></textarea>
+          </label>
+
+          <label class="checkbox-row">
+            <input id="favorite" name="favorite" type="checkbox">
+            <span>Marcar como favorito</span>
+          </label>
+
+          <div class="form-actions">
+            <button class="primary-button" type="submit" id="saveButton">Guardar contacto</button>
+            <button class="secondary-button" type="button" id="deleteButton" disabled>Eliminar</button>
+          </div>
+        </form>
+
+        <section class="toolbox">
+          <div class="panel-header compact">
+            <div>
+              <p class="panel-kicker">Herramientas</p>
+              <h3>Gestion de datos</h3>
+            </div>
+          </div>
+
+          <div class="toolbox-actions">
+            <button id="exportButton" class="secondary-button" type="button">Exportar JSON</button>
+            <label class="upload-button" for="importFile">Importar JSON</label>
+            <input id="importFile" type="file" accept=".json" hidden>
+            <button id="seedButton" class="ghost-button" type="button">Recargar demo</button>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Panel central: busqueda, filtros y lista -->
+      <section class="panel panel-list">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Busqueda y filtros</p>
+            <h2>Contactos guardados</h2>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-field">
+            <span class="sr-only">Buscar contacto</span>
+            <input id="searchInput" type="search" placeholder="Buscar por nombre, telefono, correo o empresa">
+          </label>
+
+          <div class="two-columns toolbar-columns">
+            <label>
+              Categoria
+              <select id="filterCategory">
+                <option value="Todos">Todos</option>
+              </select>
+            </label>
+
+            <label>
+              Ordenar por
+              <select id="sortSelect">
+                <option value="recent">Mas recientes</option>
+                <option value="name-asc">Nombre A-Z</option>
+                <option value="name-desc">Nombre Z-A</option>
+                <option value="favorites">Favoritos primero</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="filter-pills" role="tablist" aria-label="Filtros rapidos">
+          <button class="pill active" type="button" data-view="all">Todos</button>
+          <button class="pill" type="button" data-view="favorites">Favoritos</button>
+          <button class="pill" type="button" data-view="recent">Actualizados</button>
+        </div>
+
+        <div id="contactList" class="contact-list" aria-live="polite"></div>
+      </section>
+
+      <!-- Panel derecho: detalle del contacto seleccionado -->
+      <aside class="panel panel-detail">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker">Vista rapida</p>
+            <h2>Detalle del contacto</h2>
+          </div>
+        </div>
+
+        <section id="detailCard" class="detail-card empty">
+          <div class="detail-empty">
+            <strong>Selecciona un contacto</strong>
+            <p>Aqui veras sus telefonos, correo, direccion y comentarios.</p>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
